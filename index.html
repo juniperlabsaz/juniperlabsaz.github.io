@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JuniperLabs Auto Post</title>
+<meta name="description" content="JuniperLabs Auto Post — internal automation tool for publishing indie mobile game promotional clips to social media.">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="shortcut icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fafafa;
+  }
+  .header {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand img {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .brand h1 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .header-nav a {
+    color: #555;
+    text-decoration: none;
+    margin-left: 24px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .header-nav a:hover { color: #2563eb; }
+
+  .hero {
+    background: linear-gradient(135deg, #5d8a3a 0%, #7ab04a 100%);
+    color: #fff;
+    padding: 80px 24px;
+  }
+  .hero-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero h2 {
+    font-size: 44px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .hero p {
+    font-size: 19px;
+    max-width: 680px;
+    margin: 0 auto 24px;
+    opacity: 0.95;
+  }
+  .pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 64px 24px;
+  }
+  section {
+    margin-bottom: 64px;
+  }
+  section:last-child { margin-bottom: 0; }
+
+  h2.section-title {
+    font-size: 30px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 19px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .lead {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+  p { margin-bottom: 14px; font-size: 16px; }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .feature {
+    background: #fff;
+    padding: 28px 24px;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+  }
+  .feature .icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .feature p {
+    font-size: 14.5px;
+    color: #555;
+    margin-bottom: 0;
+  }
+
+  .flow {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .flow-step {
+    display: flex;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .flow-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .flow-step:first-child { padding-top: 0; }
+  .flow-num {
+    background: #5d8a3a;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .flow-text strong { display: block; margin-bottom: 4px; }
+  .flow-text span { color: #666; font-size: 15px; }
+  .flow-text code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+
+  .scopes {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .scope {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .scope:last-child { border-bottom: none; padding-bottom: 0; }
+  .scope:first-child { padding-top: 0; }
+  .scope code {
+    background: #f3f4f6;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+  .scope p {
+    color: #666;
+    font-size: 14.5px;
+    margin: 6px 0 0;
+  }
+
+  .games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .game-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+  }
+  .game-card strong { display: block; margin-bottom: 4px; }
+  .game-card span { color: #666; font-size: 14px; }
+
+  .contact-box {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+  }
+  .contact-box a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .contact-box a:hover { text-decoration: underline; }
+
+  footer {
+    background: #1a1a1a;
+    color: #aaa;
+    padding: 40px 24px;
+    text-align: center;
+    font-size: 14px;
+  }
+  footer a {
+    color: #ddd;
+    text-decoration: none;
+    margin: 0 12px;
+  }
+  footer a:hover { color: #fff; text-decoration: underline; }
+  .footer-brand {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .hero h2 { font-size: 32px; }
+    .hero p { font-size: 16px; }
+    .header-nav a { margin-left: 14px; font-size: 13px; }
+    .brand h1 { font-size: 17px; }
+    .container { padding: 48px 20px; }
+    h2.section-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="icon.png" alt="JuniperLabs Auto Post icon">
+      <h1>JuniperLabs Auto Post</h1>
+    </div>
+    <nav class="header-nav">
+      <a href="#how">How it works</a>
+      <a href="#scopes">API Usage</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="pill">INTERNAL DEVELOPER TOOL</div>
+    <h2>Automated social posting for indie mobile games</h2>
+    <p>
+      JuniperLabs Auto Post is a single-tenant internal automation tool that publishes
+      short-form gameplay clips of our indie mobile games to our own social media
+      creator accounts on a scheduled basis.
+    </p>
+  </div>
+</div>
+
+<div class="container">
+
+  <section id="overview">
+    <h2 class="section-title">Overview</h2>
+    <p class="lead">
+      JuniperLabs is an independent mobile game studio with three published games on
+      the App Store. JuniperLabs Auto Post is the internal tool we built to promote
+      those games on TikTok, YouTube Shorts, and X by automatically publishing short
+      gameplay clips with AI-generated captions.
+    </p>
+
+    <div class="games">
+      <div class="game-card">
+        <strong>LetterPath</strong>
+        <span>Word puzzle game</span>
+      </div>
+      <div class="game-card">
+        <strong>Yuki</strong>
+        <span>Grid-based puzzle game</span>
+      </div>
+      <div class="game-card">
+        <strong>Cow Dog Life</strong>
+        <span>Endless runner</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2 class="section-title">What the tool does</h2>
+    <p class="lead">
+      The tool runs locally on JuniperLabs hardware. It does not collect any data
+      from TikTok end users and is not made available to any third party.
+    </p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="icon">📹</div>
+        <h3>Gameplay capture</h3>
+        <p>Selects pre-recorded gameplay clips from a curated local library of our own games.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🤖</div>
+        <h3>AI caption generation</h3>
+        <p>Uses Google Gemini to generate platform-tailored captions, hashtags, and hook text from a representative frame.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🎬</div>
+        <h3>Vertical video build</h3>
+        <p>Builds 9:16 vertical videos with branded text overlays using FFmpeg.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📤</div>
+        <h3>Scheduled publishing</h3>
+        <p>Publishes to JuniperLabs-owned creator accounts on a cron schedule via the official platform APIs.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2 class="section-title">How it works</h2>
+    <p class="lead">
+      A scheduled job runs three times per day per platform. Each run completes the
+      following pipeline end-to-end.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-text">
+          <strong>Authentication</strong>
+          <span>JuniperLabs creator account is authorized once via TikTok's OAuth 2.0 flow with the <code>user.info.basic</code> and <code>video.upload</code> scopes. The access token is stored locally and refreshed automatically.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-text">
+          <strong>Clip selection</strong>
+          <span>The tool picks a gameplay clip from the local clip library, cycling through all clips before repeating to ensure variety.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-text">
+          <strong>Caption generation</strong>
+          <span>A frame is sent to Google Gemini, which returns a caption, hashtags, and a short hook overlay.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-text">
+          <strong>Video assembly</strong>
+          <span>FFmpeg builds a 9:16 vertical video with the hook overlay, music, and the gameplay footage.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <div class="flow-text">
+          <strong>Publish to TikTok</strong>
+          <span>The video is uploaded to the authorized JuniperLabs creator account via the TikTok Content Posting API. The post ID is logged locally.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="scopes">
+    <h2 class="section-title">TikTok API usage</h2>
+    <p class="lead">
+      We request the minimum scopes required for the integration. We do not collect
+      data from any TikTok user other than the JuniperLabs creator account that
+      explicitly authorizes the tool.
+    </p>
+
+    <div class="scopes">
+      <div class="scope">
+        <code>user.info.basic</code>
+        <p>Read the open ID, union ID, avatar, and display name of the JuniperLabs creator account to confirm authorization and label posts in our internal log.</p>
+      </div>
+      <div class="scope">
+        <code>video.upload</code>
+        <p>Upload pre-recorded gameplay videos to the authorized JuniperLabs creator account via the Content Posting API.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2 class="section-title">Contact</h2>
+    <p class="lead">
+      Questions about the tool, this integration, or data requests.
+    </p>
+    <div class="contact-box">
+      <a href="mailto:juniper.labs.az@gmail.com">juniper.labs.az@gmail.com</a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-brand">JuniperLabs Auto Post</div>
+  <div>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="mailto:juniper.labs.az@gmail.com">Contact</a>
+  </div>
+  <p style="margin-top: 16px;">© 2026 JuniperLabs · Built in Arizona</p>
+</footer>
+
+</body>
+</html>
